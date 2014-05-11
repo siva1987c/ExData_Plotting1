@@ -1,0 +1,25 @@
+plot4 <- function()
+{
+  d = read.table("household_power_consumption.txt", sep=";",header=TRUE)
+  d$Date <- as.Date(d$Date, format = "%d/%m/%Y")
+  a <- d[d$Date >="2007-02-01" & d$Date <="2007-02-02",]        
+  a$DateTime <- paste(a$Date,a$Time)
+  a$DateTime <- strptime(a$DateTime,"%Y-%m-%d %H:%M:%S")        
+  a$Sub_metering_1 <- as.numeric(as.character(a$Sub_metering_1))
+  a$Sub_metering_2 <- as.numeric(as.character(a$Sub_metering_2))
+  a$Sub_metering_3 <- as.numeric(as.character(a$Sub_metering_3))
+  a$voltage <- as.numeric(as.character(a$Voltage))
+  a$Global_active_power <- as.numeric(as.character(a$Global_active_power))
+  a$Global_reactive_power <- as.numeric(as.character(a$Global_reactive_power))
+  png(filename = "plot4.png", width = 480, height = 480)
+  par(mfrow=c(2,2))
+  with(a,{plot(a$DateTime,a$Global_active_power,type="l",xlab="",ylab="Global Active Power")
+          plot(a$DateTime,a$voltage,type="l",xlab="datetime",ylab="Voltage")
+          plot(a$DateTime, a$Sub_metering_1, type='l',xlab="",ylab="Enery sub metering",ylim=range(a$Sub_metering_1,a$Sub_metering_2,a$Sub_metering_3))
+          lines(a$DateTime, a$Sub_metering_2, type='l', col='red')
+          lines(a$DateTime, a$Sub_metering_3, type='l', col='blue')      
+          legend("topright",lty=1,col=c("black","red","blue"),bty='n',legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+          plot(a$DateTime,a$Global_reactive_power,type="l",xlab="datetime",ylab="Global_reactive_power")})                 
+  dev.off()
+  
+}
